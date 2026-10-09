@@ -1,0 +1,1 @@
+class OrderDao { const OrderDao(); }

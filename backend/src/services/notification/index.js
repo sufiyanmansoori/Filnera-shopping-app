@@ -1,0 +1,1 @@
+module.exports = { emailService: require('./email.service'), smsService: require('./sms.service'), pushService: require('./push.service'), websocketService: require('./websocket.service'), templateService: require('./template.service') };

@@ -1,0 +1,50 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🚀 Backend (Node.js)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/backend",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["nodemon", "server.js"],
+      "envFile": "${workspaceFolder}/backend/.env",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "📱 Flutter App (Chrome)",
+      "type": "dart",
+      "request": "launch",
+      "program": "${workspaceFolder}/flutter_app/lib/main.dart",
+      "args": ["-d", "chrome"],
+      "cwd": "${workspaceFolder}/flutter_app"
+    },
+    {
+      "name": "📱 Flutter App (Android)",
+      "type": "dart",
+      "request": "launch",
+      "program": "${workspaceFolder}/flutter_app/lib/main.dart",
+      "args": ["-d", "android"],
+      "cwd": "${workspaceFolder}/flutter_app"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "🔥 FULL STACK (Backend + Flutter Chrome)",
+      "configurations": [
+        "🚀 Backend (Node.js)",
+        "📱 Flutter App (Chrome)"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "🔥 FULL STACK (Backend + Flutter Android)",
+      "configurations": [
+        "🚀 Backend (Node.js)",
+        "📱 Flutter App (Android)"
+      ],
+      "stopAll": true
+    }
+  ]
+}

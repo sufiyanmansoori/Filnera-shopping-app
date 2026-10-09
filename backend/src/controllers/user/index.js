@@ -1,0 +1,1 @@
+module.exports = { userController: require('./user.controller'), addressController: require('./address.controller'), preferenceController: require('./preference.controller'), wishlistController: require('./wishlist.controller') };

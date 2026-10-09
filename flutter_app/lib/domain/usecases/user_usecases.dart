@@ -1,0 +1,1 @@
+class UserUseCases { const UserUseCases(); }

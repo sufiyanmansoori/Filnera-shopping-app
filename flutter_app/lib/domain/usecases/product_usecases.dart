@@ -1,0 +1,1 @@
+class ProductUseCases { const ProductUseCases(); }

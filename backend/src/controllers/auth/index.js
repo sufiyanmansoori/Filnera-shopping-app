@@ -1,0 +1,1 @@
+module.exports = { authController: require('./auth.controller'), passwordController: require('./password.controller'), verificationController: require('./verification.controller'), oauthController: require('./oauth.controller') };

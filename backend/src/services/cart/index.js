@@ -1,0 +1,1 @@
+module.exports = { cartService: require('./cart.service'), pricingService: require('./pricing.service'), couponService: require('./coupon.service'), inventoryService: require('./inventory.service'), cartSyncService: require('./cart-sync.service') };

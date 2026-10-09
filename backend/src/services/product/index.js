@@ -1,0 +1,1 @@
+module.exports = { productService: require('./product.service'), searchService: require('./search.service'), filterService: require('./filter.service'), cacheService: require('./cache.service'), similarityService: require('./similarity.service') };

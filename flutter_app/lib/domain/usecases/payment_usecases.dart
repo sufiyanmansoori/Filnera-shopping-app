@@ -1,0 +1,1 @@
+class PaymentUseCases { const PaymentUseCases(); }

@@ -1,0 +1,1 @@
+class ProductDao { const ProductDao(); }

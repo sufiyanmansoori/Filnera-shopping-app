@@ -1,0 +1,1 @@
+module.exports = { productController: require('./product.controller'), detailsController: require('./details.controller'), reviewController: require('./review.controller'), catalogController: require('./catalog.controller') };

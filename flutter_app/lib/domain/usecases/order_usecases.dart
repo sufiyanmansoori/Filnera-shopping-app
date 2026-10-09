@@ -1,0 +1,1 @@
+class OrderUseCases { const OrderUseCases(); }

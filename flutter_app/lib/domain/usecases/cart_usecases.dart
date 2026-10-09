@@ -1,0 +1,1 @@
+class CartUseCases { const CartUseCases(); }

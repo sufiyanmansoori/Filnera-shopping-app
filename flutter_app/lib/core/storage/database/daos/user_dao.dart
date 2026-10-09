@@ -1,0 +1,1 @@
+class UserDao { const UserDao(); }

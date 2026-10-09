@@ -1,0 +1,1 @@
+class CrashService { void init() {} }

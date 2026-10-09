@@ -1,0 +1,1 @@
+module.exports = { sellerController: require('./seller.controller'), inventoryController: require('./inventory.controller'), analyticsController: require('./analytics.controller'), ordersController: require('./orders.controller') };

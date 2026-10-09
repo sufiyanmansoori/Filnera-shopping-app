@@ -1,0 +1,2 @@
+module.exports = { adminController: require('./dashboard.controller'), productsController: require('./products.controller'), ordersController: require('./orders.controller'), usersController: require('./users.controller'), sellersController: require('./sellers.controller'), analyticsController: require('./analytics.controller'), reportsController: require('./reports.controller'), promotionsController: require('./promotions.controller') };
+ 

@@ -1,0 +1,13 @@
+export 'data/datasources/wishlist_local_datasource.dart';
+export 'data/datasources/wishlist_remote_datasource.dart';
+export 'data/models/wishlist_item_model.dart';
+export 'data/models/wishlist_model.dart';
+export 'data/repositories/wishlist_repository_impl.dart';
+export 'domain/entities/wishlist_entity.dart';
+export 'domain/usecases/get_wishlist_usecase.dart';
+export 'presentation/providers/wishlist_provider.dart';
+export 'presentation/screens/wishlist_screen.dart';
+export 'presentation/screens/wishlist_comparison_screen.dart';
+export 'presentation/widgets/wishlist_item_card_widget.dart';
+export 'presentation/widgets/empty_wishlist_widget.dart';
+export 'presentation/widgets/wishlist_actions_widget.dart';

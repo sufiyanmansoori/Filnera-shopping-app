@@ -1,0 +1,56 @@
+name: flutter_app
+description: "A production-style e-commerce Flutter application for the Manara shopping app."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cached_network_image: ^4.0.0
+  camera: ^0.11.1+2
+  cupertino_icons: ^1.0.8
+  dio: ^5.11.0
+  equatable: ^2.1.0
+  flutter_svg: ^2.3.0
+  get_it: ^9.2.1
+  go_router: ^18.0.0
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  image_picker: ^1.2.0
+  intl: ^0.20.3
+  mobile_scanner: ^7.0.1
+  path_provider: ^2.1.6
+  provider: ^6.1.5
+  shared_preferences: ^2.5.5
+  flutter_secure_storage: ^9.2.4
+  speech_to_text: ^7.0.0
+  video_player: ^2.9.5
+  url_launcher: ^6.3.2
+  permission_handler: ^13.0.2
+  flutter_image_compress: ^2.5.1
+  qr_flutter: ^4.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  
+  # Assets Configuration
+  assets:
+    - assets/images/logo.png
+    - assets/images/banner.png
+
+  # Fonts Configuration
+  fonts:
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/NotoSans-Regular.ttf
+        - asset: assets/fonts/NotoSans-Bold.ttf
+          weight: 700
+          # ❌ video_player yahan se REMOVE karein

@@ -1,0 +1,1 @@
+module.exports = { awsS3Service: require('./aws-s3.service'), sendgridService: require('./sendgrid.service'), twilioService: require('./twilio.service'), firebaseService: require('./firebase.service'), elasticsearchService: require('./elasticsearch.service') };

@@ -1,0 +1,1 @@
+module.exports = { cacheDecorator: require('./cache.decorator'), rateLimitDecorator: require('./rateLimit.decorator'), authDecorator: require('./auth.decorator'), validateDecorator: require('./validate.decorator') };

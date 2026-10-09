@@ -1,0 +1,1 @@
+module.exports = { sellerService: require('./seller.service'), inventoryService: require('./inventory.service'), analyticsService: require('./analytics.service'), payoutService: require('./payout.service') };
