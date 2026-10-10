@@ -4,9 +4,9 @@
   "scripts": {
     "dev": "concurrently \"npm run backend\" \"npm run flutter\"",
     "backend": "cd backend && npm run dev",
-    "flutter": "cd flutter_app && flutter run -d chrome",
-    "flutter:android": "cd flutter_app && flutter run -d android",
-    "install:all": "cd backend && npm install && cd ../flutter_app && flutter pub get",
+    "flutter": "cd filnera && flutter run -d chrome",
+    "flutter:android": "cd filnera && flutter run -d android",
+    "install:all": "cd backend && npm install && cd ../filnera && flutter pub get",
     "stop": "taskkill /F /IM node.exe & taskkill /F /IM dart.exe"
   },
   "devDependencies": {
