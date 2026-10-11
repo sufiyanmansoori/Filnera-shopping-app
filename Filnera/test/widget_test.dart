@@ -8,8 +8,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_app/app.dart';
-import 'package:flutter_app/features/settings/presentation/pages/settings_page.dart';
+import 'package:filnera/app.dart';
+import 'package:filnera/features/settings/presentation/pages/settings_page.dart';
 
 void main() {
   testWidgets('app renders the storefront shell', (WidgetTester tester) async {

@@ -1,5 +1,5 @@
-name: flutter_app
-description: "A production-style e-commerce Flutter application for the Manara shopping app."
+name: filnera 
+description: "A production-style e-commerce Flutter application for the filnera shopping app."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -27,7 +27,7 @@ dependencies:
   shared_preferences: ^2.5.5
   flutter_secure_storage: ^9.2.4
   speech_to_text: ^7.0.0
-  video_player: ^2.9.5
+  video_player: ^2.9.5  # ✅ Yeh wapas add kiya hai kyunki yeh dependencies mein tha
   url_launcher: ^6.3.2
   permission_handler: ^13.0.2
   flutter_image_compress: ^2.5.1
@@ -53,4 +53,3 @@ flutter:
         - asset: assets/fonts/NotoSans-Regular.ttf
         - asset: assets/fonts/NotoSans-Bold.ttf
           weight: 700
-          # ❌ video_player yahan se REMOVE karein

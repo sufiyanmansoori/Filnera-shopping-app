@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:dio/dio.dart';
-import 'package:flutter_app/core/exceptions/app_exception.dart';
-import 'package:flutter_app/core/exceptions/network_exception.dart';
-import 'package:flutter_app/core/exceptions/validation_exception.dart';
-import 'package:flutter_app/core/network/api_client.dart';
-import 'package:flutter_app/core/network/network_info.dart';
+import 'package:filnera/core/exceptions/app_exception.dart';
+import 'package:filnera/core/exceptions/network_exception.dart';
+import 'package:filnera/core/exceptions/validation_exception.dart';
+import 'package:filnera/core/network/api_client.dart';
+import 'package:filnera/core/network/network_info.dart';
 
 /// Production-grade, globally reusable order repository for the
 /// MANARASHOPPINGAPPMAIN Flutter application.

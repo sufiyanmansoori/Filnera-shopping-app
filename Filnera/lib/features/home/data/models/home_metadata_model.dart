@@ -58,10 +58,10 @@ class HomeMetadataModel {
     final _ = _metadataMap(
       root['personalization'] ?? root['personalization_context'],
     );
-    final experiments = _metadataMap(
+    final _ = _metadataMap(
       root['experiments'] ?? root['experiment_assignments'],
     );
-    const knownKeys = <String>{
+    const _ = <String>{
       'metadata',
       'meta',
       'data',
@@ -111,7 +111,7 @@ class HomeMetadataModel {
       'schema_version',
       'schemaVersion',
     };
-    final additional = <String, Object?>{
+    final _ = <String, Object?>{
         final additional = Map<String, Object?>.fromEntries(
           root.entries
               .where((entry) => !knownKeys.contains(entry.key))
@@ -239,61 +239,7 @@ class HomeMetadataModel {
     );
   }
 
-  HomeMetadataModel copyWith({
-    String? locale,
-    String? country,
-    String? region,
-    String? currency,
-    String? timeZone,
-    String? requestId,
-    String? apiVersion,
-    String? source,
-    String? personalizedFor,
-    DateTime? generatedAt,
-    DateTime? expiresAt,
-    bool? cacheHit,
-    int? cacheAgeSeconds,
-    int? schemaVersion,
-    Map<String, Object?>? experiments,
-    Map<String, Object?>? additional,
-  }) => HomeMetadataModel(
-    locale: locale ?? this.locale,
-    country: country ?? this.country,
-    region: region ?? this.region,
-    currency: currency ?? this.currency,
-    timeZone: timeZone ?? this.timeZone,
-    requestId: requestId ?? this.requestId,
-    apiVersion: apiVersion ?? this.apiVersion,
-    source: source ?? this.source,
-    personalizedFor: personalizedFor ?? this.personalizedFor,
-    generatedAt: generatedAt ?? this.generatedAt,
-    expiresAt: expiresAt ?? this.expiresAt,
-    cacheHit: cacheHit ?? this.cacheHit,
-    cacheAgeSeconds: cacheAgeSeconds ?? this.cacheAgeSeconds,
-    schemaVersion: schemaVersion ?? this.schemaVersion,
-    experiments: experiments ?? this.experiments,
-    additional: additional ?? this.additional,
-  );
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
-    if (locale != null) 'locale': locale,
-    if (country != null) 'country': country,
-    if (region != null) 'region': region,
-    if (currency != null) 'currency': currency,
-    if (timeZone != null) 'timezone': timeZone,
-    if (requestId != null) 'request_id': requestId,
-    if (apiVersion != null) 'api_version': apiVersion,
-    if (source != null) 'source': source,
-    if (personalizedFor != null) 'personalized_for': personalizedFor,
-    if (generatedAt != null)
-      'generated_at': generatedAt!.toUtc().toIso8601String(),
-    if (expiresAt != null) 'expires_at': expiresAt!.toUtc().toIso8601String(),
-    if (cacheHit != null) 'cache_hit': cacheHit,
-    if (cacheAgeSeconds != null) 'cache_age_seconds': cacheAgeSeconds,
-    if (schemaVersion != null) 'schema_version': schemaVersion,
-    if (experiments.isNotEmpty) 'experiments': experiments,
-    ...additional,
-  };
 }
 
 Map<String, dynamic> _unwrapMetadata(Map<String, dynamic> source) {
@@ -326,15 +272,8 @@ Map<String, dynamic> _metadataMap(dynamic value) {
   return value.map((key, value) => MapEntry(key.toString(), value));
 }
 
-String? _metadataText(Iterable<dynamic> values) {
-  for (final value in values) {
-    if (value == null) continue;
-    final text = value.toString().trim();
-    if (text.isNotEmpty && text != 'null') return text;
-  }
-  return null;
-}
 
+// ignore: unused_element
 int? _metadataInt(dynamic value) {
   if (value is int) return value;
   if (value is num) return value.toInt();
@@ -344,39 +283,4 @@ int? _metadataInt(dynamic value) {
   return int.tryParse(value?.toString() ?? '');
 }
 
-bool? _metadataBool(dynamic value) {
-  if (value is bool) return value;
-  if (value is num) return value != 0;
-  if (value is String) {
-    switch (value.trim().toLowerCase()) {
-      case 'true':
-      case '1':
-      case 'yes':
-      case 'hit':
-        return true;
-      case 'false':
-      case '0':
-      case 'no':
-      case 'miss':
-        return false;
-    }
-  }
-  return null;
-}
 
-DateTime? _metadataDate(dynamic value) {
-  if (value is DateTime) return value;
-  if (value is int) {
-    return DateTime.fromMillisecondsSinceEpoch(value, isUtc: true);
-  }
-  if (value is String) {
-    final text = value.trim();
-    if (text.isEmpty) return null;
-    final epoch = int.tryParse(text);
-    if (epoch != null) {
-      return DateTime.fromMillisecondsSinceEpoch(epoch, isUtc: true);
-    }
-    return DateTime.tryParse(text);
-  }
-  return null;
-}

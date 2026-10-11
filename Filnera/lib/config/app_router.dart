@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/features/account/presentation/screens/gift_cards_page.dart';
+import 'package:filnera/features/account/presentation/screens/gift_cards_page.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/auth/presentation/pages/login_page.dart';

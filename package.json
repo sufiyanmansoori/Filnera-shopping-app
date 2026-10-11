@@ -1,5 +1,5 @@
 {
-  "name": "manarashop-fullstack",
+  "name": "filnerashop-fullstack",
   "version": "1.0.0",
   "scripts": {
     "dev": "concurrently \"npm run backend\" \"npm run flutter\"",
