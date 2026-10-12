@@ -282,5 +282,3 @@ int? _metadataInt(dynamic value) {
   }
   return int.tryParse(value?.toString() ?? '');
 }
-
-
