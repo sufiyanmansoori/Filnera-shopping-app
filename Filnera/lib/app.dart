@@ -6,6 +6,7 @@ import 'core/services/theme_service.dart';
 import 'core/theme/manara_theme.dart';
 import 'features/cart/data/repositories/cart_repository_impl.dart';
 import 'features/cart/presentation/providers/cart_provider.dart';
+import 'features/auth/presentation/providers/auth_provider.dart';
 import 'features/products/data/repositories/product_repository_impl.dart';
 import 'features/products/presentation/providers/product_provider.dart';
 
@@ -18,17 +19,29 @@ class ManaraApp extends StatefulWidget {
 
 class _ManaraAppState extends State<ManaraApp> {
   ThemeMode _themeMode = ThemeMode.system;
+  late final AuthProvider _authProvider;
+  late final CartProvider _cartProvider;
 
   @override
   void initState() {
     super.initState();
     _themeMode = ThemePreferenceService.initialMode;
+    _authProvider = AuthProvider();
+    _cartProvider = CartProvider(repository: CartRepositoryImpl());
+    _authProvider.loadSession().then((_) {
+      final user = _authProvider.currentUser;
+      if (mounted && user != null && _authProvider.isAuthenticated) {
+        _cartProvider.fetchCart(user.userId);
+      }
+    });
     ThemePreferenceService.themeMode.addListener(_themeChanged);
   }
 
   @override
   void dispose() {
     ThemePreferenceService.themeMode.removeListener(_themeChanged);
+    _authProvider.dispose();
+    _cartProvider.dispose();
     super.dispose();
   }
 
@@ -44,11 +57,8 @@ class _ManaraAppState extends State<ManaraApp> {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) =>
-              CartProvider(repository: CartRepositoryImpl())
-                ..fetchCart('demo-user'),
-        ),
+        ChangeNotifierProvider.value(value: _authProvider),
+        ChangeNotifierProvider.value(value: _cartProvider),
         ChangeNotifierProvider(
           create: (_) => ProductProvider(repository: ProductRepositoryImpl()),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:filnera/features/account/presentation/screens/gift_cards_page.dart';
 import 'package:go_router/go_router.dart';
+import '../core/services/session_service.dart';
 
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/auth/presentation/pages/register_page.dart';
@@ -29,8 +30,25 @@ import '../features/payments/presentation/pages/scan_and_pay_screen.dart';
 import '../features/browse/presentation/pages/browse_page.dart';
 
 class AppRouter {
+  static final _authRefresh = _SessionRefreshListenable();
+
   static final GoRouter router = GoRouter(
     initialLocation: '/',
+    refreshListenable: _authRefresh,
+    redirect: (context, state) {
+      const protectedLocations = {
+        '/cart',
+        '/checkout',
+        '/payment',
+        '/addresses',
+        '/orders',
+      };
+      if (protectedLocations.contains(state.uri.path) &&
+          !SessionService.isAuthenticated.value) {
+        return '/login?returnTo=${Uri.encodeComponent(state.uri.toString())}';
+      }
+      return null;
+    },
     routes: [
       ShellRoute(
         builder: (context, state, child) => MainShell(child: child),
@@ -55,11 +73,15 @@ class AppRouter {
           ),
           GoRoute(
             path: '/checkout',
-            builder: (context, state) => const CheckoutPage(),
+            builder: (context, state) => CheckoutPage(
+              buyNow: state.uri.queryParameters['buyNow'] == 'true',
+            ),
           ),
           GoRoute(
             path: '/payment',
-            builder: (context, state) => const PaymentPage(),
+            builder: (context, state) => PaymentPage(
+              buyNow: state.uri.queryParameters['buyNow'] == 'true',
+            ),
           ),
           GoRoute(
             path: '/addresses',
@@ -98,11 +120,15 @@ class AppRouter {
           ),
           GoRoute(
             path: '/login',
-            builder: (context, state) => const LoginPage(),
+            builder: (context, state) => LoginPage(
+              returnTo: state.uri.queryParameters['returnTo'],
+            ),
           ),
           GoRoute(
             path: '/register',
-            builder: (context, state) => const RegisterPage(),
+            builder: (context, state) => RegisterPage(
+              returnTo: state.uri.queryParameters['returnTo'],
+            ),
           ),
           GoRoute(
             path: '/location',
@@ -171,6 +197,12 @@ class AppRouter {
 
   static void goToProduct(BuildContext context, ProductModel product) {
     context.push('/product/${product.id}');
+  }
+}
+
+class _SessionRefreshListenable extends ChangeNotifier {
+  _SessionRefreshListenable() {
+    SessionService.isAuthenticated.addListener(notifyListeners);
   }
 }
 

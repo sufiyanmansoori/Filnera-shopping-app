@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../cart/data/models/cart_item_model.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
 import '../../../shop/shop_store.dart';
+import '../../../../core/services/session_service.dart';
+import '../../../checkout/data/checkout_intent_store.dart';
+import '../../data/models/product_model.dart';
 import '../providers/product_provider.dart';
 
 class ProductDetailScreen extends StatefulWidget {
@@ -23,6 +27,48 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       final provider = context.read<ProductProvider>();
       provider.fetchProductById(widget.productId);
     });
+  }
+
+  Future<void> _purchaseProduct(
+    BuildContext context,
+    ProductModel product, {
+    required bool buyNow,
+  }) async {
+    final purchase = buyNow ? 'buy' : 'add';
+    if (!SessionService.isAuthenticated.value) {
+      final productPath =
+          '/product/${Uri.encodeComponent(product.id)}?purchase=$purchase';
+      context.push('/login?returnTo=${Uri.encodeComponent(productPath)}');
+      return;
+    }
+
+    final item = CartItemModel(
+      id: product.id,
+      productId: product.id,
+      productName: product.name,
+      productImage: product.imageUrl,
+      price: product.price,
+      quantity: 1,
+      variant: 'Default',
+      seller: product.sellerName,
+    );
+    if (buyNow) {
+      CheckoutIntentStore.startBuyNow(item);
+      context.push('/checkout?buyNow=true');
+      return;
+    }
+    final cart = context.read<CartProvider>();
+    await cart.addItem(item);
+    if (!context.mounted) return;
+    if (cart.error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(cart.error!)),
+      );
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Added to cart')),
+    );
   }
 
   @override
@@ -240,27 +286,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     Expanded(
                       child: FilledButton.icon(
                         onPressed: product.stock > 0
-                            ? () {
-                                context.read<CartProvider>().addItem(
-                                  CartItemModel(
-                                    id: product.id,
-                                    productId: product.id,
-                                    productName: product.name,
-                                    productImage: product.imageUrl,
-                                    price: product.price,
-                                    quantity: 1,
-                                    variant: 'Default',
-                                    seller: product.sellerName,
-                                  ),
-                                );
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Added to cart'),
-                                  ),
-                                );
-                              }
+                            ? () => _purchaseProduct(context, product, buyNow: false)
                             : null,
-                        icon: const Icon(Icons.shopping_bag_rounded),
+                        icon: const Icon(Icons.add_shopping_cart_rounded),
                         label: const Text('Add to cart'),
                         style: FilledButton.styleFrom(
                           minimumSize: const Size.fromHeight(52),
@@ -270,28 +298,36 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: ValueListenableBuilder<Set<String>>(
-                        valueListenable: ShopStore.wishlist,
-                        builder: (context, savedItems, _) {
-                          final isSaved = savedItems.contains(product.id);
-                          return OutlinedButton.icon(
-                            onPressed: () =>
-                                ShopStore.toggleWishlist(product.id),
-                            icon: Icon(
-                              isSaved
-                                  ? Icons.favorite_rounded
-                                  : Icons.favorite_border_rounded,
-                            ),
-                            label: Text(isSaved ? 'Saved' : 'Wishlist'),
-                            style: OutlinedButton.styleFrom(
-                              minimumSize: const Size.fromHeight(52),
-                              side: const BorderSide(color: Color(0xFF1F5EFF)),
-                            ),
-                          );
-                        },
+                      child: FilledButton(
+                        onPressed: product.stock > 0
+                            ? () => _purchaseProduct(context, product, buyNow: true)
+                            : null,
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size.fromHeight(52),
+                          backgroundColor: const Color(0xFFFF9F00),
+                        ),
+                        child: const Text('Buy now'),
                       ),
                     ),
                   ],
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ValueListenableBuilder<Set<String>>(
+                    valueListenable: ShopStore.wishlist,
+                    builder: (context, savedItems, _) {
+                      final isSaved = savedItems.contains(product.id);
+                      return TextButton.icon(
+                        onPressed: () => ShopStore.toggleWishlist(product.id),
+                        icon: Icon(
+                          isSaved
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
+                        ),
+                        label: Text(isSaved ? 'Saved' : 'Add to wishlist'),
+                      );
+                    },
+                  ),
                 ),
                 const SizedBox(height: 20),
                 if (provider.similarProducts.isNotEmpty) ...[

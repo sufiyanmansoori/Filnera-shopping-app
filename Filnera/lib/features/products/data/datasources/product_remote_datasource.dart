@@ -40,14 +40,25 @@ class ProductRemoteDataSource {
 
   Future<ProductModel> fetchProductById(String id) async {
     final response = await _apiClient.get('/products/$id');
-    return ProductModel.fromJson(Map<String, dynamic>.from(response.data));
+    return ProductModel.fromJson(_unwrapProduct(response.data));
   }
 
   Future<ProductDetailModel> fetchProductDetails(String id) async {
     final response = await _apiClient.get('/products/$id');
     return ProductDetailModel.fromJson(
-      Map<String, dynamic>.from(response.data),
+      _unwrapProduct(response.data),
     );
+  }
+
+  Map<String, dynamic> _unwrapProduct(dynamic responseData) {
+    if (responseData is! Map) {
+      throw const FormatException('Product response must be a JSON object.');
+    }
+    final response = Map<String, dynamic>.from(responseData);
+    final payload = response['data'];
+    return payload is Map
+        ? Map<String, dynamic>.from(payload)
+        : response;
   }
 
   Future<List<ProductModel>> fetchSimilarProducts(String productId) async {

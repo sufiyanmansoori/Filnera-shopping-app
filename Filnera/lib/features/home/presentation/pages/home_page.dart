@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/services/session_service.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/product_image.dart';
 import '../../../../data/models/product_model.dart';
@@ -540,6 +541,35 @@ class ProductGridTile extends StatelessWidget {
 
   final ProductModel product;
 
+  Future<void> _addToCart(BuildContext context) async {
+    if (!SessionService.isAuthenticated.value) {
+      final target =
+          '/product/${Uri.encodeComponent(product.id)}?purchase=add';
+      context.push('/login?returnTo=${Uri.encodeComponent(target)}');
+      return;
+    }
+
+    final cart = context.read<CartProvider>();
+    await cart.addItem(
+      CartItemModel(
+        id: product.id,
+        productId: product.id,
+        productName: product.name,
+        productImage: product.imageUrl,
+        price: product.price,
+        quantity: 1,
+        variant: 'Default',
+        seller: 'Filnera',
+      ),
+    );
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(cart.error ?? 'Added to cart'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -626,23 +656,7 @@ class ProductGridTile extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
-                        onPressed: () {
-                          context.read<CartProvider>().addItem(
-                            CartItemModel(
-                              id: product.id,
-                              productId: product.id,
-                              productName: product.name,
-                              productImage: product.imageUrl,
-                              price: product.price,
-                              quantity: 1,
-                              variant: 'Default',
-                              seller: 'Manara Store',
-                            ),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Added to cart')),
-                          );
-                        },
+                        onPressed: () => _addToCart(context),
                         child: const Text('ADD TO CART'),
                       ),
                     ),

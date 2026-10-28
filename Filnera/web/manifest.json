@@ -1,11 +1,11 @@
 {
-    "name": "Filnera",
-    "short_name": "Filnera",
+    "name": "Filnera Shop",
+    "short_name": "Filnera Shop",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A production-style e-commerce Flutter application for Filnera.",
+    "description": "A production-style e-commerce Flutter application for Filnera Shop.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

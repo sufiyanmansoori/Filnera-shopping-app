@@ -12,12 +12,21 @@ class DealRemoteDataSource {
     String? subcategoryId,
     bool activeOnly = true,
     int limit = 12,
+    int page = 1,
+    int? pageSize,
     String? sortBy,
     String? locale,
+    String? currency,
     String? country,
+    String? deviceType,
   }) async {
+    final safePage = page < 1 ? 1 : page;
+    final safeLimit = limit.clamp(1, 100);
+    final safePageSize = (pageSize ?? safeLimit).clamp(1, 100);
     final queryParameters = <String, dynamic>{
-      'limit': limit,
+      'limit': safeLimit,
+      'page': safePage,
+      'page_size': safePageSize,
       'active_only': activeOnly,
       if (sortBy != null && sortBy.isNotEmpty) 'sort_by': sortBy,
       if (categoryId != null && categoryId.isNotEmpty)
@@ -25,7 +34,10 @@ class DealRemoteDataSource {
       if (subcategoryId != null && subcategoryId.isNotEmpty)
         'subcategory_id': subcategoryId,
       if (locale != null && locale.isNotEmpty) 'locale': locale,
+      if (currency != null && currency.isNotEmpty) 'currency': currency,
       if (country != null && country.isNotEmpty) 'country': country,
+      if (deviceType != null && deviceType.isNotEmpty)
+        'device_type': deviceType,
     };
 
     try {
@@ -35,7 +47,11 @@ class DealRemoteDataSource {
       );
       final normalized = _normalizeList(response.data);
       if (normalized.isNotEmpty) return normalized;
-      return _fallbackDeals();
+      return _paginateFallbackDeals(
+        _fallbackDeals(),
+        page: safePage,
+        pageSize: safePageSize,
+      );
     } catch (_) {
       try {
         final response = await _apiClient.get(
@@ -44,9 +60,17 @@ class DealRemoteDataSource {
         );
         final normalized = _normalizeList(response.data);
         if (normalized.isNotEmpty) return normalized;
-        return _fallbackDeals();
+        return _paginateFallbackDeals(
+          _fallbackDeals(),
+          page: safePage,
+          pageSize: safePageSize,
+        );
       } catch (_) {
-        return _fallbackDeals();
+        return _paginateFallbackDeals(
+          _fallbackDeals(),
+          page: safePage,
+          pageSize: safePageSize,
+        );
       }
     }
   }
@@ -155,6 +179,16 @@ class DealRemoteDataSource {
     final response = DealResponseModel.fromValue(data);
     if (!response.isSuccessful) return const <Map<String, dynamic>>[];
     return response.deals.map((deal) => deal.toJson()).toList(growable: false);
+  }
+
+  List<Map<String, dynamic>> _paginateFallbackDeals(
+    List<Map<String, dynamic>> deals, {
+    required int page,
+    required int pageSize,
+  }) {
+    final start = ((page - 1) * pageSize).clamp(0, deals.length);
+    final end = (start + pageSize).clamp(start, deals.length);
+    return deals.sublist(start, end);
   }
 
   Map<String, dynamic> _normalizeMap(dynamic data) {

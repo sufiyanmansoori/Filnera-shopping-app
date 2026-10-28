@@ -8,19 +8,30 @@ class BannerRemoteDataSource {
   final ApiClient _apiClient;
 
   Future<List<Map<String, dynamic>>> fetchBanners({
+    int page = 1,
+    int? pageSize,
     String? categoryId,
     bool activeOnly = true,
     int limit = 10,
     String? locale,
+    String? currency,
     String? country,
+    String? deviceType,
   }) async {
+    final safePage = page < 1 ? 1 : page;
+    final safePageSize = (pageSize ?? limit).clamp(1, 50);
     final queryParameters = <String, dynamic>{
-      'limit': limit,
+      'page': safePage,
+      'page_size': safePageSize,
+      'limit': limit.clamp(1, 100),
       'active_only': activeOnly,
       if (categoryId != null && categoryId.isNotEmpty)
         'category_id': categoryId,
       if (locale != null && locale.isNotEmpty) 'locale': locale,
+      if (currency != null && currency.isNotEmpty) 'currency': currency,
       if (country != null && country.isNotEmpty) 'country': country,
+      if (deviceType != null && deviceType.isNotEmpty)
+        'device_type': deviceType,
     };
 
     try {

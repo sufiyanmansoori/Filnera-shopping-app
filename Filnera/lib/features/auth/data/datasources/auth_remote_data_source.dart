@@ -2,40 +2,26 @@ import '../models/auth_response_model.dart';
 import '../models/login_request_model.dart';
 import '../models/oauth_model.dart';
 import '../models/register_request_model.dart';
+import '../../../../core/network/api_client.dart';
 
 class AuthRemoteDataSource {
-  const AuthRemoteDataSource();
+  const AuthRemoteDataSource({this.apiClient});
+
+  final ApiClient? apiClient;
+
+  ApiClient get _client => apiClient ?? ApiClient();
 
   Future<AuthResponseModel> login(LoginRequestModel request) async {
-    await Future<void>.delayed(const Duration(milliseconds: 600));
-
-    return AuthResponseModel(
-      accessToken: 'mock_access_token_${DateTime.now().millisecondsSinceEpoch}',
-      refreshToken:
-          'mock_refresh_token_${DateTime.now().millisecondsSinceEpoch}',
-      userId: 'user_01',
-      email: request.email,
-      fullName: request.email.split('@').first.replaceAll('.', ' ').trim(),
-      roles: const ['customer'],
-      expiresAt: DateTime.now().add(const Duration(hours: 24)),
-      avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e',
-    );
+    final response = await _client.post('/auth/login', data: request.toJson());
+    return AuthResponseModel.fromJson(_responseData(response.data));
   }
 
   Future<AuthResponseModel> register(RegisterRequestModel request) async {
-    await Future<void>.delayed(const Duration(milliseconds: 750));
-
-    return AuthResponseModel(
-      accessToken:
-          'mock_access_token_register_${DateTime.now().millisecondsSinceEpoch}',
-      refreshToken:
-          'mock_refresh_token_register_${DateTime.now().millisecondsSinceEpoch}',
-      userId: 'user_${DateTime.now().millisecondsSinceEpoch}',
-      email: request.email,
-      fullName: request.fullName,
-      roles: const ['customer'],
-      expiresAt: DateTime.now().add(const Duration(hours: 24)),
+    final response = await _client.post(
+      '/auth/register',
+      data: request.toJson(),
     );
+    return AuthResponseModel.fromJson(_responseData(response.data));
   }
 
   Future<void> verifyOtp({
@@ -67,17 +53,16 @@ class AuthRemoteDataSource {
   }
 
   Future<AuthResponseModel> signInWithOAuth(OAuthModel oauth) async {
-    await Future<void>.delayed(const Duration(milliseconds: 800));
-
-    return AuthResponseModel(
-      accessToken: 'oauth_access_${DateTime.now().millisecondsSinceEpoch}',
-      refreshToken: 'oauth_refresh_${DateTime.now().millisecondsSinceEpoch}',
-      userId: 'oauth_user_${DateTime.now().millisecondsSinceEpoch}',
-      email: oauth.email ?? 'oauth.user@example.com',
-      fullName: oauth.name ?? 'OAuth User',
-      roles: const ['customer'],
-      expiresAt: DateTime.now().add(const Duration(hours: 24)),
-      avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
+    throw UnsupportedError(
+      'OAuth sign-in is unavailable until a provider is configured.',
     );
+  }
+
+  Map<String, dynamic> _responseData(dynamic body) {
+    if (body is Map<String, dynamic> && body['data'] is Map) {
+      return Map<String, dynamic>.from(body['data'] as Map);
+    }
+    if (body is Map<String, dynamic>) return body;
+    throw const FormatException('The server returned an invalid auth response.');
   }
 }

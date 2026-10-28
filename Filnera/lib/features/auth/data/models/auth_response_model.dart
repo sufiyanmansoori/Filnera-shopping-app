@@ -22,21 +22,32 @@ class AuthResponseModel {
   final bool requiresTwoFactor;
 
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) {
+    final user = json['user'] is Map
+        ? Map<String, dynamic>.from(json['user'] as Map)
+        : json;
+    final accessToken = (json['accessToken'] ?? json['token'])?.toString() ?? '';
+    if (accessToken.isEmpty) {
+      throw const FormatException('The server did not return an access token.');
+    }
     return AuthResponseModel(
-      accessToken: json['accessToken'] as String? ?? '',
-      refreshToken: json['refreshToken'] as String? ?? '',
-      userId: json['userId'] as String? ?? '',
-      email: json['email'] as String? ?? '',
-      fullName: json['fullName'] as String? ?? 'User',
-      roles: (json['roles'] as List<dynamic>? ?? const [])
+      accessToken: accessToken,
+      refreshToken: json['refreshToken']?.toString() ?? '',
+      userId:
+          (user['userId'] ?? user['id'] ?? user['_id'])?.toString() ?? '',
+      email: user['email']?.toString() ?? '',
+      fullName:
+          (user['fullName'] ?? user['name'])?.toString() ?? 'User',
+      roles: (user['roles'] as List<dynamic>? ??
+              (user['role'] == null ? const [] : [user['role']]))
           .map((role) => role.toString())
           .toList(),
       expiresAt:
           DateTime.tryParse(
-            (json['expiresAt'] as String?) ?? DateTime.now().toIso8601String(),
+            (json['expiresAt'] as String?) ??
+                DateTime.now().add(const Duration(days: 7)).toIso8601String(),
           ) ??
-          DateTime.now().add(const Duration(hours: 24)),
-      avatarUrl: json['avatarUrl'] as String?,
+          DateTime.now().add(const Duration(days: 7)),
+      avatarUrl: user['avatarUrl']?.toString(),
       requiresTwoFactor: json['requiresTwoFactor'] as bool? ?? false,
     );
   }

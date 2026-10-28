@@ -12,7 +12,7 @@
     <!-- SEO & Description -->
     <meta
       name="description"
-      content="Filnera - Your one-stop shop for premium electronics, fashion, and home essentials."
+      content="Filnera Shop - Your one-stop shop for premium electronics, fashion, and home essentials."
     />
     <meta
       name="keywords"
@@ -43,7 +43,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <title>Filnera | PREMIUM Shopping</title>
+    <title>Filnera Shop | PREMIUM Shopping</title>
     <!-- Inline CSS for Professional E-Commerce Splash Screen -->
     <style>
       * {
@@ -151,7 +151,8 @@
         width: 170px;
         height: 170px;
         object-fit: contain;
-        filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.18));
+        border-radius: 0;
+        mix-blend-mode: normal;
       }
 
       .brand-name {
@@ -300,12 +301,10 @@
         0%,
         100% {
           transform: scale(1);
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
         50% {
           transform: scale(1.05);
-          box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
         }
       }
 
@@ -345,7 +344,7 @@
       <div class="brand-container">
         <div class="brand-logo">
           <img
-            src="icons/Icon-192.png"
+            src="icons/Icon-192-splash.png"
             alt="Filnera Logo"
             onerror="
               this.src =
@@ -353,7 +352,7 @@
             "
           />
         </div>
-        <div class="brand-name">Filnera</div>
+        <div class="brand-name">Filnera Shop</div>
         <div class="brand-tagline">Buy Everything!</div>
       </div>
 
@@ -406,7 +405,7 @@
               return true;
             }
           } catch (e) {
-            console.warn("[Filnera] Safe remove failed:", elementId, e);
+            console.warn("[Filnera Shop] Safe remove failed:", elementId, e);
           }
           return false;
         }
@@ -431,7 +430,7 @@
         // Utility: Logging (only in debug mode)
         function log(message, data) {
           if (CONFIG.debugMode) {
-            console.log("[Finlera]", message, data || "");
+            console.log("[Filnera Shop]", message, data || "");
           }
         }
 
@@ -453,7 +452,7 @@
               requestAnimationFrame(updatePercent);
             }
           } catch (e) {
-            console.warn("[Filnera] Percent update error:", e);
+            console.warn("[Filnera Shop] Percent update error:", e);
           }
         }
 
@@ -475,7 +474,7 @@
         let fallbackTimer = setTimeout(function () {
           const loader = document.getElementById(CONFIG.loaderId);
           if (loader && !loader.classList.contains("hidden")) {
-            console.warn("[Finlera] First-frame timeout, hiding loader");
+            console.warn("[Filnera] First-frame timeout, hiding loader");
             hideLoader();
           }
         }, CONFIG.fallbackTimeout);

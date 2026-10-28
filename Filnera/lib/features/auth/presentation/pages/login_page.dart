@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/services/profile_store.dart';
-import 'otp_verification_page.dart';
+import '../../../cart/presentation/providers/cart_provider.dart';
+import '../auth_return_handler.dart';
+import '../providers/auth_provider.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, this.returnTo});
+
+  final String? returnTo;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -17,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   final _identityController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
-  bool _usePhone = false;
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -28,43 +33,39 @@ class _LoginPageState extends State<LoginPage> {
 
   String get _identity => _identityController.text.trim();
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_isSubmitting) return;
     FocusManager.instance.primaryFocus?.unfocus();
-    ProfileStore.save(
-      name: _identity.contains('@')
-          ? _identity.split('@').first
-          : 'Manara shopper',
-      email: _identity.contains('@') ? _identity : '$_identity@manara.app',
-    );
-    context.go('/');
-  }
-
-  void _loginWithOtp() {
-    if (!_formKey.currentState!.validate()) return;
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => OtpVerificationPage(
-          identity: _identity,
-          name: _identity.contains('@')
-              ? _identity.split('@').first
-              : 'Manara shopper',
-          isRegistration: false,
-        ),
-      ),
-    );
-  }
-
-  void _loginWithGoogle() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => const OtpVerificationPage(
-          identity: 'Google account',
-          name: 'Google shopper',
-          isRegistration: false,
-        ),
-      ),
-    );
+    setState(() => _isSubmitting = true);
+    final auth = context.read<AuthProvider>();
+    final cart = context.read<CartProvider>();
+    try {
+      await auth.loginWithEmail(
+        email: _identity,
+        password: _passwordController.text,
+      );
+      if (!mounted) return;
+      final session = auth.currentUser;
+      if (!auth.isAuthenticated || session == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(auth.errorMessage ?? 'Unable to sign in.')),
+        );
+        return;
+      }
+      await ProfileStore.save(name: session.fullName, email: session.email);
+      await cart.fetchCart(session.userId);
+      if (!mounted) return;
+      await AuthReturnHandler.complete(context, returnTo: widget.returnTo);
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error.toString())),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
   }
 
   void _forgotPassword() {
@@ -73,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
       builder: (_) => AlertDialog(
         title: const Text('Reset password'),
         content: const Text(
-          'We will send a reset link or OTP to your registered contact.',
+          'Password recovery is not configured yet. Please contact support.',
         ),
         actions: [
           TextButton(
@@ -140,37 +141,18 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(color: Colors.grey),
                   ),
                   const SizedBox(height: 28),
-                  SegmentedButton<bool>(
-                    segments: const [
-                      ButtonSegment(value: false, label: Text('Email')),
-                      ButtonSegment(value: true, label: Text('Mobile')),
-                    ],
-                    selected: {_usePhone},
-                    onSelectionChanged: (selection) =>
-                        setState(() => _usePhone = selection.first),
-                  ),
-                  const SizedBox(height: 16),
                   TextFormField(
                     controller: _identityController,
-                    keyboardType: _usePhone
-                        ? TextInputType.phone
-                        : TextInputType.emailAddress,
+                    keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       final text = value?.trim() ?? '';
-                      if (_usePhone) {
-                        return text.length < 10
-                            ? 'Enter a valid mobile number'
-                            : null;
-                      }
                       return !text.contains('@')
                           ? 'Enter a valid email address'
                           : null;
                     },
                     decoration: InputDecoration(
-                      labelText: _usePhone ? 'Mobile number' : 'Email address',
-                      prefixIcon: Icon(
-                        _usePhone ? Icons.phone_outlined : Icons.email_outlined,
-                      ),
+                      labelText: 'Email address',
+                      prefixIcon: const Icon(Icons.email_outlined),
                       border: const OutlineInputBorder(),
                     ),
                   ),
@@ -207,30 +189,31 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _submit,
+                      onPressed: _isSubmitting ? null : _submit,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFF9F00),
                         foregroundColor: Colors.white,
                         minimumSize: const Size(double.infinity, 50),
                       ),
-                      child: const Text('Login with password'),
+                      child: _isSubmitting
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Login with password'),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  OutlinedButton.icon(
-                    onPressed: _loginWithOtp,
-                    icon: const Icon(Icons.verified_outlined),
-                    label: const Text('Login with OTP'),
-                  ),
-                  const SizedBox(height: 8),
-                  OutlinedButton.icon(
-                    onPressed: _loginWithGoogle,
-                    icon: const Icon(Icons.g_mobiledata, size: 28),
-                    label: const Text('Continue with Google'),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton(
-                    onPressed: () => context.push('/register'),
+                    onPressed: () {
+                      final returnTo = AuthReturnHandler.safeLocation(
+                        widget.returnTo,
+                      );
+                      context.push(
+                        '/register?returnTo=${Uri.encodeComponent(returnTo)}',
+                      );
+                    },
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 48),
                       foregroundColor: const Color(0xFF2874F0),

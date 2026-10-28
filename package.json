@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "concurrently \"npm run backend\" \"npm run flutter\"",
-    "backend": "cd backend && npm run dev",
-    "flutter": "cd filnera && flutter run -d chrome",
-    "flutter:android": "cd filnera && flutter run -d android",
-    "install:all": "cd backend && npm install && cd ../filnera && flutter pub get",
+    "backend": "npm --prefix backend run dev",
+    "flutter": "cd Filnera && flutter run -d chrome",
+    "flutter:android": "cd Filnera && flutter run -d android",
+    "install:all": "npm --prefix backend install && cd Filnera && flutter pub get",
     "stop": "taskkill /F /IM node.exe & taskkill /F /IM dart.exe"
   },
   "devDependencies": {

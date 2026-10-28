@@ -19,7 +19,6 @@ class ApiClient {
       ),
     );
 
-    // Add logging interceptor
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
@@ -27,16 +26,14 @@ class ApiClient {
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
-          return handler.next(options);
+          handler.next(options);
         },
-        onResponse: (response, handler) {
-          return handler.next(response);
-        },
-        onError: (DioException e, handler) {
-          if (e.response?.statusCode == 401) {
-            SessionService.clear();
+        onResponse: (response, handler) => handler.next(response),
+        onError: (DioException error, handler) async {
+          if (error.response?.statusCode == 401) {
+            await SessionService.clear();
           }
-          return handler.next(e);
+          handler.next(error);
         },
       ),
     );
@@ -45,19 +42,13 @@ class ApiClient {
   Future<Response> get(
     String path, {
     Map<String, dynamic>? queryParameters,
-  }) async {
-    return await _dio.get(path, queryParameters: queryParameters);
-  }
+  }) => _dio.get(path, queryParameters: queryParameters);
 
-  Future<Response> post(String path, {dynamic data}) async {
-    return await _dio.post(path, data: data);
-  }
+  Future<Response> post(String path, {dynamic data}) =>
+      _dio.post(path, data: data);
 
-  Future<Response> put(String path, {dynamic data}) async {
-    return await _dio.put(path, data: data);
-  }
+  Future<Response> put(String path, {dynamic data}) =>
+      _dio.put(path, data: data);
 
-  Future<Response> delete(String path) async {
-    return await _dio.delete(path);
-  }
+  Future<Response> delete(String path) => _dio.delete(path);
 }

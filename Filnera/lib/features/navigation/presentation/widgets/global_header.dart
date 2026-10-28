@@ -551,7 +551,7 @@ class _HoverMenuState extends State<_HoverMenu> {
                       ),
                       Flexible(
                         child: Scrollbar(
-                          thumbVisibility: true,
+                          thumbVisibility: false,
                           thickness: 6,
                           radius: const Radius.circular(8),
                           child: ListView.separated(

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../cart/presentation/providers/cart_provider.dart';
+import '../../data/checkout_intent_store.dart';
 
 enum CheckoutPaymentMethod { upi, card, wallet, cod, giftCard, emi }
 
 class PaymentPage extends StatefulWidget {
-  const PaymentPage({super.key});
+  const PaymentPage({super.key, this.buyNow = false});
+
+  final bool buyNow;
 
   @override
   State<PaymentPage> createState() => _PaymentPageState();
@@ -16,7 +20,6 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   CheckoutPaymentMethod? _expanded;
   bool _amountExpanded = false;
-  bool _processing = false;
   final _giftCard = TextEditingController();
 
   @override
@@ -26,106 +29,114 @@ class _PaymentPageState extends State<PaymentPage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    body: CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          pinned: true,
-          title: const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Step 3 of 3', style: TextStyle(fontSize: 12)),
-              Text('Payments'),
+  Widget build(BuildContext context) {
+    final cart = context.watch<CartProvider>().cart;
+    final buyNowItem = widget.buyNow ? CheckoutIntentStore.buyNowItem : null;
+    final subtotal = buyNowItem?.subtotal ?? cart.subtotal;
+    final discount = widget.buyNow ? 0.0 : cart.discount;
+    final total = subtotal - discount + cart.deliveryFee;
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            title: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Step 3 of 3', style: TextStyle(fontSize: 12)),
+                Text('Payments'),
+              ],
+            ),
+            actions: const [
+              Padding(
+                padding: EdgeInsets.only(right: 16),
+                child: Row(
+                  children: [
+                    Icon(Icons.lock_outline, size: 16),
+                    SizedBox(width: 4),
+                    Text('Payment setup', style: TextStyle(fontSize: 12)),
+                  ],
+                ),
+              ),
             ],
           ),
-          actions: const [
-            Padding(
-              padding: EdgeInsets.only(right: 16),
-              child: Row(
-                children: [
-                  Icon(Icons.lock_outline, size: 16),
-                  SizedBox(width: 4),
-                  Text('100% Secure', style: TextStyle(fontSize: 12)),
-                ],
-              ),
+          SliverPadding(
+            padding: const EdgeInsets.all(16),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                _amountBanner(subtotal, discount, total),
+                const SizedBox(height: 12),
+                _paymentStatusBanner(),
+                const SizedBox(height: 20),
+                const Text(
+                  'Recommended for You',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 8),
+                _methodCard(
+                  CheckoutPaymentMethod.upi,
+                  Icons.account_balance_wallet,
+                  'UPI',
+                  'Pay using any UPI app',
+                  'Up to ₹100 cashback',
+                  disabled: true,
+                ),
+                _methodCard(
+                  CheckoutPaymentMethod.cod,
+                  Icons.payments_outlined,
+                  'Cash on Delivery',
+                  'Pay when your order arrives',
+                  null,
+                  disabled: true,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Other Payment Options',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 8),
+                _methodCard(
+                  CheckoutPaymentMethod.card,
+                  Icons.credit_card,
+                  'Credit / Debit / ATM Card',
+                  'Add and secure cards for faster checkout',
+                  null,
+                  disabled: true,
+                ),
+                _methodCard(
+                  CheckoutPaymentMethod.wallet,
+                  Icons.account_balance_wallet_outlined,
+                  'Wallets',
+                  'Paytm and other wallets',
+                  'Extra cashback available',
+                  disabled: true,
+                ),
+                _methodCard(
+                  CheckoutPaymentMethod.giftCard,
+                  Icons.card_giftcard,
+                  'Gift Card',
+                  'Use a saved gift card balance',
+                  null,
+                  disabled: true,
+                ),
+                _methodCard(
+                  CheckoutPaymentMethod.emi,
+                  Icons.calendar_month,
+                  'EMI',
+                  'Not available for this order',
+                  null,
+                  disabled: true,
+                ),
+                const SizedBox(height: 12),
+              ]),
             ),
-          ],
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.all(16),
-          sliver: SliverList(
-            delegate: SliverChildListDelegate([
-              _amountBanner(),
-              const SizedBox(height: 12),
-              _cashbackBanner(),
-              const SizedBox(height: 20),
-              const Text(
-                'Recommended for You',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(height: 8),
-              _methodCard(
-                CheckoutPaymentMethod.upi,
-                Icons.account_balance_wallet,
-                'UPI',
-                'Pay using any UPI app',
-                'Up to ₹100 cashback',
-              ),
-              _methodCard(
-                CheckoutPaymentMethod.cod,
-                Icons.payments_outlined,
-                'Cash on Delivery',
-                'Pay when your order arrives',
-                null,
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Other Payment Options',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(height: 8),
-              _methodCard(
-                CheckoutPaymentMethod.card,
-                Icons.credit_card,
-                'Credit / Debit / ATM Card',
-                'Add and secure cards for faster checkout',
-                null,
-              ),
-              _methodCard(
-                CheckoutPaymentMethod.wallet,
-                Icons.account_balance_wallet_outlined,
-                'Wallets',
-                'Paytm and other wallets',
-                'Extra cashback available',
-              ),
-              _methodCard(
-                CheckoutPaymentMethod.giftCard,
-                Icons.card_giftcard,
-                'Gift Card',
-                'Use a saved gift card balance',
-                null,
-              ),
-              _methodCard(
-                CheckoutPaymentMethod.emi,
-                Icons.calendar_month,
-                'EMI',
-                'Not available for this order',
-                null,
-                disabled: true,
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Test mode is enabled. Connect a verified payment gateway before production.',
-                style: TextStyle(color: Colors.grey, fontSize: 12),
-              ),
-            ]),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
 
-  Widget _amountBanner() => Card(
+  Widget _amountBanner(double subtotal, double discount, double total) => Card(
     color: const Color(0xFFE8F0FE),
     child: Column(
       children: [
@@ -138,7 +149,7 @@ class _PaymentPageState extends State<PaymentPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                AppFormatters.currency(289),
+                AppFormatters.currency(total),
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
@@ -150,36 +161,26 @@ class _PaymentPageState extends State<PaymentPage> {
           onTap: () => setState(() => _amountExpanded = !_amountExpanded),
         ),
         if (_amountExpanded) ...[
-          _summary('MRP', '₹399'),
-          _summary('Discount', '-₹110', color: Colors.green),
-          _summary('Tax and fees', '₹0'),
+          _summary('Subtotal', AppFormatters.currency(subtotal)),
+          _summary(
+            'Discount',
+            '-${AppFormatters.currency(discount)}',
+            color: Colors.green,
+          ),
+          _summary('Delivery and fees', '₹0'),
         ],
       ],
     ),
   );
 
-  Widget _cashbackBanner() => Card(
-    color: const Color(0xFFE8F5E9),
+  Widget _paymentStatusBanner() => const Card(
+    color: Color(0xFFFFF4E5),
     child: ListTile(
-      leading: const Icon(Icons.local_offer, color: Colors.green),
-      title: const Text(
-        '5% Cashback',
-        style: TextStyle(fontWeight: FontWeight.w800),
-      ),
-      subtitle: const Text('Claim now with online payment'),
-      trailing: SizedBox(
-        width: 72,
-        child: Stack(
-          children: [
-            _avatar('P', Colors.blue),
-            Positioned(left: 18, child: _avatar('G', Colors.green)),
-            const Positioned(
-              left: 38,
-              top: 12,
-              child: Text('+3', style: TextStyle(fontWeight: FontWeight.w700)),
-            ),
-          ],
-        ),
+      leading: Icon(Icons.info_outline, color: Colors.deepOrange),
+      title: Text('Payments are not configured'),
+      subtitle: Text(
+        'A verified payment gateway and order API are required before '
+        'orders can be placed. No payment will be collected here.',
       ),
     ),
   );
@@ -288,12 +289,12 @@ class _PaymentPageState extends State<PaymentPage> {
   Widget _orderButton(String label, VoidCallback action) => SizedBox(
     width: double.infinity,
     child: ElevatedButton(
-      onPressed: _processing ? null : action,
+      onPressed: action,
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFFFF9F00),
         foregroundColor: Colors.white,
       ),
-      child: Text(_processing ? 'Processing...' : label),
+      child: Text(label),
     ),
   );
 
@@ -308,12 +309,6 @@ class _PaymentPageState extends State<PaymentPage> {
     ),
   );
 
-  Widget _avatar(String text, Color color) => CircleAvatar(
-    radius: 15,
-    backgroundColor: color,
-    child: Text(text, style: const TextStyle(color: Colors.white)),
-  );
-
   String _label(CheckoutPaymentMethod method) => switch (method) {
     CheckoutPaymentMethod.upi => 'UPI',
     CheckoutPaymentMethod.card => 'Card',
@@ -323,27 +318,8 @@ class _PaymentPageState extends State<PaymentPage> {
     CheckoutPaymentMethod.emi => 'EMI',
   };
 
-  Future<void> _placeOrder(String method) async {
-    setState(() => _processing = true);
-    await Future<void>.delayed(const Duration(milliseconds: 800));
-    if (!mounted) return;
-    setState(() => _processing = false);
-    _showSuccess('Order placed using $method');
-  }
-
-  void _showSuccess(String message) => showDialog<void>(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      icon: const Icon(Icons.check_circle, color: Colors.green, size: 52),
-      title: const Text('Order confirmed'),
-      content: Text(message),
-      actions: [
-        FilledButton(
-          onPressed: () => dialogContext.go('/orders'),
-          child: const Text('View orders'),
-        ),
-      ],
-    ),
+  void _placeOrder(String _) => _message(
+    'Order placement is unavailable until a payment gateway is configured.',
   );
 
   void _message(String message) =>

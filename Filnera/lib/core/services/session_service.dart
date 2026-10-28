@@ -22,6 +22,8 @@ class SessionService {
     await _storage.write(key: _accessTokenKey, value: accessToken);
     if (refreshToken != null && refreshToken.isNotEmpty) {
       await _storage.write(key: _refreshTokenKey, value: refreshToken);
+    } else {
+      await _storage.delete(key: _refreshTokenKey);
     }
     isAuthenticated.value = true;
   }

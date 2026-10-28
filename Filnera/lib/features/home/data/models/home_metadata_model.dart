@@ -51,17 +51,18 @@ class HomeMetadataModel {
 
   factory HomeMetadataModel.fromJson(Map<String, dynamic> json) {
     final root = _unwrapMetadata(json);
-    final _ = _metadataMap(
+    final context = _metadataMap(
       root['context'] ?? root['localization'] ?? root['market'],
     );
-    final _ = _metadataMap(root['cache'] ?? root['cache_info']);
-    final _ = _metadataMap(
+    final cache = _metadataMap(root['cache'] ?? root['cache_info']);
+    final personalization = _metadataMap(
       root['personalization'] ?? root['personalization_context'],
     );
-    final _ = _metadataMap(
+    final experiments = _metadataMap(
       root['experiments'] ?? root['experiment_assignments'],
     );
-    const _ = <String>{
+
+    const knownKeys = <String>{
       'metadata',
       'meta',
       'data',
@@ -111,54 +112,22 @@ class HomeMetadataModel {
       'schema_version',
       'schemaVersion',
     };
-    final _ = <String, Object?>{
-        final additional = Map<String, Object?>.fromEntries(
-          root.entries
-              .where((entry) => !knownKeys.contains(entry.key))
-              .map((entry) => MapEntry(entry.key, entry.value)),
-        )
-          ..addAll(
-            Map<String, Object?>.fromEntries(
-              context.entries
-                  .where(
-                    (entry) =>
-                        !const <String>{
-                          'locale',
-                          'locale_code',
-                          'localeCode',
-                          'country',
-                          'country_code',
-                          'countryCode',
-                          'region',
-                          'currency',
-                          'currency_code',
-                          'currencyCode',
-                          'timezone',
-                          'time_zone',
-                          'timeZone',
-                        }.contains(entry.key),
-                  )
-                  .map((entry) => MapEntry('context.${entry.key}', entry.value)),
-            ),
-          )
-          ..addAll(
-            Map<String, Object?>.fromEntries(
-              cache.entries
-                  .where((entry) =>
-                      !const <String>{
-                        'hit',
-                        'is_hit',
-                        'isHit',
-                        'age_seconds',
-                        'ageSeconds',
-                        'age',
-                      }.contains(entry.key))
-                  .map((entry) => MapEntry('cache.${entry.key}', entry.value)),
-            ),
-          );
+
+    final additional = <String, Object?>{
+      for (final entry in root.entries)
+        if (!knownKeys.contains(entry.key)) entry.key: entry.value,
+      for (final entry in context.entries)
+        if (!_contextKeys.contains(entry.key))
+          'context.${entry.key}': entry.value,
+      for (final entry in cache.entries)
+        if (!_cacheKeys.contains(entry.key)) 'cache.${entry.key}': entry.value,
+      for (final entry in personalization.entries)
+        if (!_personalizationKeys.contains(entry.key))
+          'personalization.${entry.key}': entry.value,
+    };
 
     return HomeMetadataModel(
-      locale: _metadataText(<dynamic>[
+      locale: _metadataText(<Object?>[
         root['locale'],
         root['locale_code'],
         root['localeCode'],
@@ -166,7 +135,7 @@ class HomeMetadataModel {
         context['locale_code'],
         context['localeCode'],
       ]),
-      country: _metadataText(<dynamic>[
+      country: _metadataText(<Object?>[
         root['country'],
         root['country_code'],
         root['countryCode'],
@@ -174,8 +143,8 @@ class HomeMetadataModel {
         context['country_code'],
         context['countryCode'],
       ]),
-      region: _metadataText(<dynamic>[root['region'], context['region']]),
-      currency: _metadataText(<dynamic>[
+      region: _metadataText(<Object?>[root['region'], context['region']]),
+      currency: _metadataText(<Object?>[
         root['currency'],
         root['currency_code'],
         root['currencyCode'],
@@ -183,7 +152,7 @@ class HomeMetadataModel {
         context['currency_code'],
         context['currencyCode'],
       ]),
-      timeZone: _metadataText(<dynamic>[
+      timeZone: _metadataText(<Object?>[
         root['timezone'],
         root['time_zone'],
         root['timeZone'],
@@ -191,18 +160,18 @@ class HomeMetadataModel {
         context['time_zone'],
         context['timeZone'],
       ]),
-      requestId: _metadataText(<dynamic>[
+      requestId: _metadataText(<Object?>[
         root['request_id'],
         root['requestId'],
         root['trace_id'],
       ]),
-      apiVersion: _metadataText(<dynamic>[
+      apiVersion: _metadataText(<Object?>[
         root['api_version'],
         root['apiVersion'],
         root['version'],
       ]),
-      source: _metadataText(<dynamic>[root['source']]),
-      personalizedFor: _metadataText(<dynamic>[
+      source: _metadataText(<Object?>[root['source']]),
+      personalizedFor: _metadataText(<Object?>[
         root['personalized_for'],
         root['personalizedFor'],
         root['user_id'],
@@ -222,7 +191,8 @@ class HomeMetadataModel {
         root['cache_hit'] ??
             root['cacheHit'] ??
             cache['hit'] ??
-            cache['is_hit'],
+            cache['is_hit'] ??
+            cache['isHit'],
       ),
       cacheAgeSeconds: _metadataInt(
         root['cache_age_seconds'] ??
@@ -234,25 +204,50 @@ class HomeMetadataModel {
       schemaVersion: _metadataInt(
         root['schema_version'] ?? root['schemaVersion'],
       ),
-      experiments: experiments.cast<String, Object?>(),
+      experiments: experiments,
       additional: additional,
     );
   }
-
-
 }
+
+const _contextKeys = <String>{
+  'locale',
+  'locale_code',
+  'localeCode',
+  'country',
+  'country_code',
+  'countryCode',
+  'region',
+  'currency',
+  'currency_code',
+  'currencyCode',
+  'timezone',
+  'time_zone',
+  'timeZone',
+};
+
+const _cacheKeys = <String>{
+  'hit',
+  'is_hit',
+  'isHit',
+  'age_seconds',
+  'ageSeconds',
+  'age',
+};
+
+const _personalizationKeys = <String>{'user_id', 'userId', 'customer_id'};
 
 Map<String, dynamic> _unwrapMetadata(Map<String, dynamic> source) {
   var metadata = source;
   for (var depth = 0; depth < 3; depth++) {
     final nested = metadata['metadata'] ?? metadata['meta'];
     if (nested is Map) {
-      metadata = _metadataMap(nested);
+      metadata = _metadataMap(nested).cast<String, dynamic>();
       continue;
     }
     final data = metadata['data'];
     if (data is Map && !_looksLikeMetadata(metadata)) {
-      metadata = _metadataMap(data);
+      metadata = _metadataMap(data).cast<String, dynamic>();
       continue;
     }
     break;
@@ -267,13 +262,59 @@ bool _looksLikeMetadata(Map<String, dynamic> value) =>
     value.containsKey('cache_hit') ||
     value.containsKey('request_id');
 
-Map<String, dynamic> _metadataMap(dynamic value) {
-  if (value is! Map) return const <String, dynamic>{};
-  return value.map((key, value) => MapEntry(key.toString(), value));
+Map<String, Object?> _metadataMap(dynamic value) {
+  if (value is! Map) return const <String, Object?>{};
+  return Map<String, Object?>.fromEntries(
+    value.entries.map((entry) => MapEntry(entry.key.toString(), entry.value)),
+  );
 }
 
+String? _metadataText(Iterable<Object?> values) {
+  for (final value in values) {
+    if (value == null || value is Map || value is List) continue;
+    final text = value.toString().trim();
+    if (text.isNotEmpty) return text;
+  }
+  return null;
+}
 
-// ignore: unused_element
+DateTime? _metadataDate(dynamic value) {
+  if (value is DateTime) return value;
+  if (value is num) {
+    final milliseconds = value.abs() < 100000000000 ? value * 1000 : value;
+    return DateTime.fromMillisecondsSinceEpoch(
+      milliseconds.toInt(),
+      isUtc: true,
+    );
+  }
+  if (value is Map) {
+    return _metadataDate(value['date'] ?? value['timestamp'] ?? value['value']);
+  }
+  if (value is String) return DateTime.tryParse(value.trim());
+  return null;
+}
+
+bool? _metadataBool(dynamic value) {
+  if (value is bool) return value;
+  if (value is num) {
+    if (value == 1) return true;
+    if (value == 0) return false;
+  }
+  if (value is String) {
+    switch (value.trim().toLowerCase()) {
+      case 'true':
+      case '1':
+      case 'yes':
+        return true;
+      case 'false':
+      case '0':
+      case 'no':
+        return false;
+    }
+  }
+  return null;
+}
+
 int? _metadataInt(dynamic value) {
   if (value is int) return value;
   if (value is num) return value.toInt();

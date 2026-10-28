@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+ import 'package:flutter/foundation.dart';
+import 'package:dio/dio.dart';
 
 import '../../data/models/auth_response_model.dart';
 import '../../data/models/login_request_model.dart';
@@ -55,7 +56,7 @@ class AuthProvider extends ChangeNotifier {
       _currentUser = session;
       _isAuthenticated = true;
     } catch (error) {
-      _errorMessage = error.toString();
+      _errorMessage = _messageFor(error);
       _isAuthenticated = false;
     } finally {
       _isLoading = false;
@@ -87,7 +88,7 @@ class AuthProvider extends ChangeNotifier {
       _currentUser = session;
       _isAuthenticated = true;
     } catch (error) {
-      _errorMessage = error.toString();
+      _errorMessage = _messageFor(error);
       _isAuthenticated = false;
     } finally {
       _isLoading = false;
@@ -191,5 +192,21 @@ class AuthProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  String _messageFor(Object error) {
+    if (error is DioException) {
+      if (error.type == DioExceptionType.connectionError ||
+          error.type == DioExceptionType.connectionTimeout ||
+          error.type == DioExceptionType.receiveTimeout) {
+        return 'Server se connection nahi ho pa raha. Project root se '
+            '`npm run dev` chala kar dobara try karein.';
+      }
+      final responseBody = error.response?.data;
+      if (responseBody is Map && responseBody['message'] is String) {
+        return responseBody['message'] as String;
+      }
+    }
+    return error.toString();
   }
 }

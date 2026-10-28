@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../../../address/data/address_store.dart';
+import '../../../cart/data/models/cart_model.dart';
+import '../../../cart/data/models/cart_item_model.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../cart/presentation/providers/cart_provider.dart';
+import '../../data/checkout_intent_store.dart';
 
 enum PaymentMethod { card, upi, wallet, cod }
 
 class CheckoutPage extends StatefulWidget {
-  const CheckoutPage({super.key});
+  const CheckoutPage({super.key, this.buyNow = false});
+
+  final bool buyNow;
 
   @override
   State<CheckoutPage> createState() => _CheckoutPageState();
@@ -26,9 +33,23 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    const deliveryFee = 149.0;
-    const subtotal = 6499.0;
-    const total = subtotal + deliveryFee;
+    final providerCart = context.watch<CartProvider>().cart;
+    final buyNowItem = widget.buyNow ? CheckoutIntentStore.buyNowItem : null;
+    if (!widget.buyNow) CheckoutIntentStore.clear();
+    final items = buyNowItem == null
+        ? const <CartItemModel>[]
+        : <CartItemModel>[buyNowItem];
+    final effectiveCart = widget.buyNow
+        ? CartModel(
+            items: items,
+            couponCode: '',
+            discount: 0,
+            deliveryFee: providerCart.deliveryFee,
+          )
+        : providerCart;
+    final subtotal = effectiveCart.subtotal;
+    final deliveryFee = effectiveCart.deliveryFee;
+    final total = effectiveCart.total;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Checkout')),
@@ -37,6 +58,22 @@ class _CheckoutPageState extends State<CheckoutPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (effectiveCart.items.isNotEmpty) ...[
+              const Text(
+                'Items in this order',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 8),
+              ...effectiveCart.items.map(
+                (item) => ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(item.productName),
+                  subtitle: Text('Qty ${item.quantity}'),
+                  trailing: Text(AppFormatters.currency(item.subtotal)),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
             const Text(
               'Shipping address',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
@@ -153,6 +190,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 children: [
                   _summaryRow('Subtotal', AppFormatters.currency(subtotal)),
                   _summaryRow('Delivery', AppFormatters.currency(deliveryFee)),
+                  if (effectiveCart.discount > 0)
+                    _summaryRow(
+                      'Discount',
+                      '-${AppFormatters.currency(effectiveCart.discount)}',
+                    ),
                   const Divider(height: 20),
                   _summaryRow(
                     'Total',
@@ -163,16 +205,29 @@ class _CheckoutPageState extends State<CheckoutPage> {
               ),
             ),
             const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => context.push('/payment'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+            ValueListenableBuilder<DeliveryAddress?>(
+              valueListenable: AddressStore.selected,
+              builder: (context, address, _) => SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: effectiveCart.items.isNotEmpty && address != null
+                      ? () => context.push(
+                          widget.buyNow ? '/payment?buyNow=true' : '/payment',
+                        )
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: Text(
+                    effectiveCart.items.isEmpty
+                        ? 'Your cart is empty'
+                        : address == null
+                        ? 'Add a shipping address'
+                        : 'Continue to payment',
+                  ),
                 ),
-                child: const Text('Place order'),
               ),
             ),
           ],

@@ -31,6 +31,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(requestLogger);
 app.use(securityHeaders);
+app.get('/', (req, res) => {
+  res.json({ name: 'Filnera API', status: 'ok', api: '/api/v1' });
+});
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 app.use('/api/v1', routes);
 app.use(notFoundHandler);
 app.use(errorHandler);

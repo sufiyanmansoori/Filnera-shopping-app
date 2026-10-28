@@ -1,6 +1,9 @@
 import '../../../../core/network/api_client.dart';
+import 'package:dio/dio.dart';
+
 import '../datasources/product_local_datasource.dart';
 import '../datasources/product_remote_datasource.dart';
+import '../datasources/storefront_product_fallback_data_source.dart';
 import '../models/category_model.dart';
 import '../models/product_detail_model.dart';
 import '../models/product_model.dart';
@@ -25,12 +28,16 @@ class ProductRepositoryImpl implements ProductRepository {
     ApiClient? apiClient,
     ProductRemoteDataSource? remoteDataSource,
     ProductLocalDataSource? localDataSource,
+    StorefrontProductFallbackDataSource? fallbackDataSource,
   }) : _remoteDataSource =
            remoteDataSource ?? ProductRemoteDataSource(apiClient: apiClient),
-       _localDataSource = localDataSource ?? ProductLocalDataSource();
+       _localDataSource = localDataSource ?? ProductLocalDataSource(),
+       _fallbackDataSource =
+           fallbackDataSource ?? StorefrontProductFallbackDataSource();
 
   final ProductRemoteDataSource _remoteDataSource;
   final ProductLocalDataSource _localDataSource;
+  final StorefrontProductFallbackDataSource _fallbackDataSource;
 
   @override
   Future<List<ProductModel>> fetchProducts({
@@ -57,7 +64,7 @@ class ProductRepositoryImpl implements ProductRepository {
     final cached = await _localDataSource.getCachedProduct(id);
     if (cached != null) return cached;
 
-    final product = await _remoteDataSource.fetchProductById(id);
+    final product = await _fetchProductOrFallback(id);
     await _localDataSource.cacheProduct(product);
     return product;
   }
@@ -78,10 +85,47 @@ class ProductRepositoryImpl implements ProductRepository {
       );
     }
 
-    final product = await _remoteDataSource.fetchProductDetails(id);
-    await _localDataSource.cacheProduct(product.product);
-    return product;
+    try {
+      final product = await _remoteDataSource.fetchProductDetails(id);
+      await _localDataSource.cacheProduct(product.product);
+      return product;
+    } on DioException catch (error) {
+      if (error.response?.statusCode != 404) rethrow;
+      final fallbackProduct = _fallbackDataSource.findById(id);
+      if (fallbackProduct == null) rethrow;
+      await _localDataSource.cacheProduct(fallbackProduct);
+      return _detailsFor(fallbackProduct);
+    }
   }
+
+  Future<ProductModel> _fetchProductOrFallback(String id) async {
+    try {
+      return await _remoteDataSource.fetchProductById(id);
+    } on DioException catch (error) {
+      if (error.response?.statusCode != 404) rethrow;
+      final product = _fallbackDataSource.findById(id);
+      if (product == null) rethrow;
+      return product;
+    }
+  }
+
+  ProductDetailModel _detailsFor(ProductModel product) => ProductDetailModel(
+    product: product,
+    variants: const <ProductVariantModel>[],
+    specifications: product.specifications.entries
+        .map(
+          (entry) => ProductSpecificationModel(
+            name: entry.key,
+            value: entry.value.toString(),
+          ),
+        )
+        .toList(),
+    reviews: const <ProductReviewModel>[],
+    sellerName: product.sellerName,
+    deliveryMessage: 'Free delivery available',
+    offers: product.offers,
+    images: product.images,
+  );
 
   @override
   Future<List<ProductModel>> fetchSimilarProducts(String productId) async {
