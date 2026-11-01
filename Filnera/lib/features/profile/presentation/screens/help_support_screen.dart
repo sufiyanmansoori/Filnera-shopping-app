@@ -20,7 +20,7 @@ class HelpSupportScreen extends StatelessWidget {
       },
       {
         'question': 'How do I contact support?',
-        'answer': 'You can contact support via the in-app help desk or email us at support@manara.app.',
+        'answer': 'You can contact support via the in-app help desk or email us at support@filnera.app.',
       },
     ];
 
@@ -52,7 +52,7 @@ class HelpSupportScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.email_outlined),
               title: const Text('Email us'),
-              subtitle: const Text('support@manara.app'),
+              subtitle: const Text('support@filnera.app'),
               trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
               onTap: () {
                 // Can be wired to launch mail app later.

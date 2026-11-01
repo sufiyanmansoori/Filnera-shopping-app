@@ -8,7 +8,7 @@ class UpiPaymentService {
   static final UpiPaymentService instance = UpiPaymentService._();
 
   static const String merchantUpiId = 'business@upi.example';
-  static const String merchantName = 'Manara Store';
+  static const String merchantName = 'Filnera Store';
 
   String buildUpiLink({required String orderId, required double amount}) {
     final cleanOrderId = orderId.replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '-');

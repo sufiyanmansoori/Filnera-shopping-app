@@ -14,5 +14,5 @@ Future<void> main() async {
   await ShopStore.initialize();
   await NotificationStore.initialize();
   await ThemePreferenceService.bootstrap();
-  runApp(const ManaraApp());
+  runApp(const FilneraApp());
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ManaraBrandColors {
+class FilneraBrandColors {
   static const Color primary = Color(0xFF2F6BFF);
   static const Color primaryDark = Color(0xFF1C3F8C);
   static const Color accent = Color(0xFFFF6B35);
@@ -11,18 +11,18 @@ class ManaraBrandColors {
   static const Color darkText = Color(0xFF162033);
 }
 
-class ManaraTheme {
+class FilneraTheme {
   static ThemeData lightTheme() => ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: ManaraBrandColors.primary,
+      seedColor: FilneraBrandColors.primary,
       brightness: Brightness.light,
     ),
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: const AppBarTheme(
       centerTitle: true,
-      backgroundColor: ManaraBrandColors.primary,
+      backgroundColor: FilneraBrandColors.primary,
       foregroundColor: Colors.white,
     ),
     cardTheme: CardThemeData(
@@ -44,15 +44,15 @@ class ManaraTheme {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(
-          color: ManaraBrandColors.primary,
+          color: FilneraBrandColors.primary,
           width: 2,
         ),
       ),
     ),
     textTheme: Typography.blackCupertino.copyWith(
-      bodyMedium: const TextStyle(color: ManaraBrandColors.darkText),
-      titleMedium: const TextStyle(color: ManaraBrandColors.darkText),
-      labelMedium: const TextStyle(color: ManaraBrandColors.darkText),
+      bodyMedium: const TextStyle(color: FilneraBrandColors.darkText),
+      titleMedium: const TextStyle(color: FilneraBrandColors.darkText),
+      labelMedium: const TextStyle(color: FilneraBrandColors.darkText),
     ),
   );
 
@@ -60,7 +60,7 @@ class ManaraTheme {
     useMaterial3: true,
     brightness: Brightness.dark,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: ManaraBrandColors.primary,
+      seedColor: FilneraBrandColors.primary,
       brightness: Brightness.dark,
     ),
     scaffoldBackgroundColor: const Color(0xFF101624),
@@ -98,7 +98,7 @@ class ManaraTheme {
   );
 }
 
-extension ManaraThemeX on BuildContext {
+extension FilneraThemeX on BuildContext {
   ThemeData get theme => Theme.of(this);
   ColorScheme get colors => theme.colorScheme;
   bool get isDarkMode => theme.brightness == Brightness.dark;

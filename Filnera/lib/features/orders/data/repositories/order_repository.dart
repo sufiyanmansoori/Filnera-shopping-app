@@ -9,7 +9,7 @@ import 'package:filnera/core/network/api_client.dart';
 import 'package:filnera/core/network/network_info.dart';
 
 /// Production-grade, globally reusable order repository for the
-/// MANARASHOPPINGAPPMAIN Flutter application.
+/// Filnera Flutter application.
 ///
 /// Responsibilities:
 /// - Rich request validation before network traffic starts.

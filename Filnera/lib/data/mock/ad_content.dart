@@ -7,7 +7,7 @@ class AdContent {
     this.category = 'All',
     this.badge = 'ADVERTISEMENT',
     this.discount = 'UP TO 60% OFF',
-    this.brand = 'Manara Store',
+    this.brand = 'Filnera Store',
   });
 
   final String title;
@@ -28,7 +28,7 @@ const homeAds = [
     cta: 'Shop electronics',
     category: 'Electronics',
     discount: 'UP TO 40% OFF',
-    brand: 'Manara Tech',
+    brand: 'Filnera Tech',
   ),
   AdContent(
     title: 'Style that moves with you',
@@ -37,7 +37,7 @@ const homeAds = [
     cta: 'Explore fashion',
     category: 'Fashion',
     discount: 'UP TO 60% OFF',
-    brand: 'Manara Fashion',
+    brand: 'Filnera Fashion',
   ),
   AdContent(
     title: 'Make home feel better',
@@ -46,7 +46,7 @@ const homeAds = [
     cta: 'Shop home',
     category: 'Home',
     discount: 'FAST DELIVERY',
-    brand: 'Manara Home',
+    brand: 'Filnera Home',
   ),
   AdContent(
     title: 'Wellness starts today',
@@ -55,7 +55,7 @@ const homeAds = [
     cta: 'Shop wellness',
     category: 'Wellness',
     discount: 'HEALTH PICKS',
-    brand: 'Manara Wellness',
+    brand: 'Filnera Wellness',
   ),
   AdContent(
     title: 'Travel more, carry less',
@@ -64,7 +64,7 @@ const homeAds = [
     cta: 'Shop travel',
     category: 'Travel',
     discount: 'TRAVEL READY',
-    brand: 'Manara Travel',
+    brand: 'Filnera Travel',
   ),
 ];
 

@@ -15,7 +15,7 @@ class ProductModel {
     this.reviewCount = 0,
     this.stock = 0,
     this.isFeatured = false,
-    this.sellerName = 'Manara Store',
+    this.sellerName = 'Filnera Store',
     this.badge = '',
     this.tags = const <String>[],
     this.variants = const <ProductVariantModel>[],
@@ -87,7 +87,7 @@ class ProductModel {
       brand:
           json['brand']?.toString() ??
           json['brand_name']?.toString() ??
-          'Manara',
+          'Filnera',
       imageUrl:
           json['image_url']?.toString() ??
           json['imageUrl']?.toString() ??
@@ -113,7 +113,7 @@ class ProductModel {
       sellerName:
           json['seller_name']?.toString() ??
           json['sellerName']?.toString() ??
-          'Manara Store',
+          'Filnera Store',
       badge: json['badge']?.toString() ?? '',
       tags: (json['tags'] as List? ?? const <dynamic>[])
           .map((item) => item.toString())

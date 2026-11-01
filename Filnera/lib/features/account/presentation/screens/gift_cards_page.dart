@@ -559,7 +559,7 @@ class _GiftCardsPageState extends State<GiftCardsPage> {
         const SizedBox(height: 10),
         _buildBanner(
           context,
-          title: 'Manara Axis Bank Credit Card',
+          title: 'Filnera Axis Bank Credit Card',
           icon: Icons.credit_card_outlined,
           onTap: () {
             _showMessage('Credit card offer opened.');

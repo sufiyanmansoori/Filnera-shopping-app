@@ -119,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(width: 14),
                         const Expanded(
                           child: Text(
-                            'Welcome back to Manara Store',
+                            'Welcome back to Filnera Store',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 21,
@@ -132,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 18),
                   const Text(
-                    'Welcome to Manara Store',
+                    'Welcome to Filnera Store',
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 8),

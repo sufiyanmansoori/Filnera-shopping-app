@@ -143,7 +143,7 @@ class GlobalHeader extends StatelessWidget implements PreferredSizeWidget {
         if (!compact) ...[
           const SizedBox(width: 8),
           const Text(
-            'Manara Store',
+            'Filnera Store',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w900,
@@ -186,7 +186,7 @@ class GlobalHeader extends StatelessWidget implements PreferredSizeWidget {
               _MenuAction('rewards', 'Supercoin', Icons.bolt_outlined),
               _MenuAction(
                 'plus',
-                'Manara Plus Zone',
+                'Filnera Plus Zone',
                 Icons.auto_awesome_outlined,
               ),
               _MenuAction(
@@ -218,7 +218,7 @@ class GlobalHeader extends StatelessWidget implements PreferredSizeWidget {
               _MenuAction('profile', 'My Profile', Icons.person_outline),
               _MenuAction(
                 'plus',
-                'Manara Plus Zone',
+                'Filnera Plus Zone',
                 Icons.auto_awesome_outlined,
               ),
               _MenuAction('orders', 'Orders', Icons.inventory_2_outlined),
@@ -367,7 +367,7 @@ class GlobalHeader extends StatelessWidget implements PreferredSizeWidget {
       case 'advertise':
         _showMessage(context, 'Advertising tools will open soon.');
       case 'download':
-        _showMessage(context, 'The Manara app download link is coming soon.');
+        _showMessage(context, 'The Filnera app download link is coming soon.');
       case 'care':
         _showMessage(
           context,

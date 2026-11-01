@@ -165,7 +165,7 @@ class _OrdersPageState extends State<OrdersPage> {
                   [
                     'Flipkart × Uber',
                     'Travel offers for you',
-                    'More rewards with Manara',
+                    'More rewards with Filnera',
                   ][_promoPage],
                   style: const TextStyle(
                     color: Colors.white,

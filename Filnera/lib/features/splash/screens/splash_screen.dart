@@ -58,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                     const SizedBox(height: 24),
                     const Text(
-                      'Manara Store',
+                      'Filnera Store',
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w800,

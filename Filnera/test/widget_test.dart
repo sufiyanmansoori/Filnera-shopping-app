@@ -13,10 +13,10 @@ import 'package:filnera/features/settings/presentation/pages/settings_page.dart'
 
 void main() {
   testWidgets('app renders the storefront shell', (WidgetTester tester) async {
-    await tester.pumpWidget(const ManaraApp());
+    await tester.pumpWidget(const FilneraApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('Manara Store'), findsOneWidget);
+    expect(find.text('Filnera Store'), findsOneWidget);
   });
 
   testWidgets('settings page exposes the global theme selector', (

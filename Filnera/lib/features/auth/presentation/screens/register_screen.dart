@@ -106,7 +106,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Join Manara today',
+                      'Join Filnera today',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w800,

@@ -37,7 +37,7 @@ class OrderItemModel {
       seller:
           json['seller']?.toString() ??
           json['sellerName']?.toString() ??
-          'Manara Store',
+          'Filnera Store',
     );
   }
 

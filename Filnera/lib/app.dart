@@ -3,21 +3,21 @@ import 'package:provider/provider.dart';
 
 import 'config/index.dart';
 import 'core/services/theme_service.dart';
-import 'core/theme/manara_theme.dart';
+import 'core/theme/filnera_theme.dart';
 import 'features/cart/data/repositories/cart_repository_impl.dart';
 import 'features/cart/presentation/providers/cart_provider.dart';
 import 'features/auth/presentation/providers/auth_provider.dart';
 import 'features/products/data/repositories/product_repository_impl.dart';
 import 'features/products/presentation/providers/product_provider.dart';
 
-class ManaraApp extends StatefulWidget {
-  const ManaraApp({super.key});
+class FilneraApp extends StatefulWidget {
+  const FilneraApp({super.key});
 
   @override
-  State<ManaraApp> createState() => _ManaraAppState();
+  State<FilneraApp> createState() => _FilneraAppState();
 }
 
-class _ManaraAppState extends State<ManaraApp> {
+class _FilneraAppState extends State<FilneraApp> {
   ThemeMode _themeMode = ThemeMode.system;
   late final AuthProvider _authProvider;
   late final CartProvider _cartProvider;
@@ -52,8 +52,8 @@ class _ManaraAppState extends State<ManaraApp> {
 
   @override
   Widget build(BuildContext context) {
-    final light = ManaraTheme.lightTheme();
-    final dark = ManaraTheme.darkTheme();
+    final light = FilneraTheme.lightTheme();
+    final dark = FilneraTheme.darkTheme();
 
     return MultiProvider(
       providers: [
@@ -68,7 +68,7 @@ class _ManaraAppState extends State<ManaraApp> {
         duration: const Duration(milliseconds: 320),
         curve: Curves.easeInOutCubic,
         child: MaterialApp.router(
-          title: 'Manara Store',
+          title: 'Filnera Store',
           debugShowCheckedModeBanner: false,
           theme: light,
           darkTheme: dark,

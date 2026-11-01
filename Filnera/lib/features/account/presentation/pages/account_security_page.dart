@@ -9,7 +9,7 @@ class SavedPaymentsPage extends StatelessWidget {
     body: ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        _method(Icons.account_balance_wallet_outlined, 'UPI', 'manara@upi'),
+        _method(Icons.account_balance_wallet_outlined, 'UPI', 'filnera@upi'),
         _method(
           Icons.credit_card_outlined,
           'Credit card',
@@ -106,7 +106,7 @@ class ManageDevicesPage extends StatelessWidget {
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: 8),
-        const Text('Review devices signed in to your Manara account.'),
+        const Text('Review devices signed in to your Filnera account.'),
         _device(
           context,
           Icons.phone_android,

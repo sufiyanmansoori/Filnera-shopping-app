@@ -11,7 +11,7 @@ class ProfileRemoteDataSource {
       id: 'user-1001',
       firstName: 'Aisha',
       lastName: 'Rahman',
-      email: 'aisha.rahman@manara.app',
+      email: 'aisha.rahman@filnera.app',
       phone: '+91 98765 43210',
       avatarUrl: '',
       city: 'Bengaluru',

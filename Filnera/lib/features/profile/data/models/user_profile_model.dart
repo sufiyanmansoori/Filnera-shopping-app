@@ -41,7 +41,7 @@ class UserProfileModel {
     phone: '',
     city: 'New Delhi',
     country: 'India',
-    bio: 'Welcome to Manara.',
+    bio: 'Welcome to Filnera.',
     createdAt: DateTime.now(),
   );
 

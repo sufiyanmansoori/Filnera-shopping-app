@@ -38,10 +38,10 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     }
     setState(() => _isSubmitting = true);
     await ProfileStore.save(
-      name: widget.name.isEmpty ? 'Manara shopper' : widget.name,
+      name: widget.name.isEmpty ? 'Filnera shopper' : widget.name,
       email: widget.identity.contains('@')
           ? widget.identity
-          : '${widget.identity}@manara.app',
+          : '${widget.identity}@filnera.app',
     );
     if (mounted) context.go('/');
   }

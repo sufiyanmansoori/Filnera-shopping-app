@@ -109,7 +109,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Join Manara Store',
+                          'Join Filnera Store',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 22,

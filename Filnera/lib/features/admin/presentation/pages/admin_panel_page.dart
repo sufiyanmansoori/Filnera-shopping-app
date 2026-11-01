@@ -52,7 +52,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         imageUrl: 'https://picsum.photos/seed/$id/700/700',
         gallery: ['https://picsum.photos/seed/$id/700/700'],
         description: _description.text.trim().isEmpty
-            ? 'New Manara product.'
+            ? 'New Filnera product.'
             : _description.text.trim(),
         features: const ['Quality checked', 'Fast delivery', 'Easy returns'],
         isFeatured: true,

@@ -178,7 +178,7 @@ class _FiltersPageState extends State<FiltersPage> {
         ),
         const Divider(),
         const Text('BRAND', style: TextStyle(fontWeight: FontWeight.bold)),
-        ...['Manara', 'AeroSmart', 'Nova', 'Premium brands'].map(
+        ...['Filnera', 'AeroSmart', 'Nova', 'Premium brands'].map(
           (v) => CheckboxListTile(
             value: brands.contains(v),
             title: Text(v),
@@ -224,7 +224,7 @@ class ReelsPage extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Manara Play'),
+          title: const Text('Filnera Play'),
           bottom: const TabBar(
             tabs: [
               Tab(

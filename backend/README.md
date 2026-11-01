@@ -1,4 +1,4 @@
-# MANARASHOPPING Backend
+# FILNERA Backend
 
 Production-ready Node.js e-commerce backend starter.
 

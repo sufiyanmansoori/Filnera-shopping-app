@@ -51,7 +51,7 @@ class ProductDetailModel {
       sellerName:
           json['seller_name']?.toString() ??
           json['sellerName']?.toString() ??
-          'Manara Store',
+          'Filnera Store',
       deliveryMessage:
           json['delivery_message']?.toString() ??
           json['deliveryMessage']?.toString() ??

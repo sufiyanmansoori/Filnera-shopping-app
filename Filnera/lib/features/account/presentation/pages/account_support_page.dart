@@ -71,7 +71,7 @@ class _AccountSupportPageState extends State<AccountSupportPage> {
     children: [
       _action(
         Icons.campaign_outlined,
-        'Manara Affiliate Program',
+        'Filnera Affiliate Program',
         'Share products and earn rewards',
         () => _message('Affiliate registration opened'),
       ),
@@ -83,7 +83,7 @@ class _AccountSupportPageState extends State<AccountSupportPage> {
       ),
       _action(
         Icons.storefront_outlined,
-        'Sell on Manara',
+        'Sell on Filnera',
         'Start selling and manage your store',
         () => _message('Seller registration opened'),
       ),
@@ -139,7 +139,7 @@ class _AccountSupportPageState extends State<AccountSupportPage> {
       ),
       SizedBox(height: 8),
       Text(
-        'By using Manara Store, you agree to our shopping, payment and account terms.',
+        'By using Filnera Store, you agree to our shopping, payment and account terms.',
       ),
       SizedBox(height: 20),
       Text(

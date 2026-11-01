@@ -19,7 +19,7 @@ class StorefrontProductFallbackDataSource {
           reviewCount: product.reviewCount,
           stock: product.stock,
           isFeatured: product.isFeatured,
-          sellerName: 'Manara Store',
+          sellerName: 'Filnera Store',
           tags: product.features,
           shortDescription: product.description,
           specifications: <String, dynamic>{

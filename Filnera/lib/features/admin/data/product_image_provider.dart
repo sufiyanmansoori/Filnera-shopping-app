@@ -97,7 +97,7 @@ class ProductImageProvider extends ChangeNotifier {
     try {
       final tempDir = await getTemporaryDirectory();
       final targetPath =
-          '${tempDir.path}/manara_${DateTime.now().microsecondsSinceEpoch}.jpg';
+          '${tempDir.path}/filnera_${DateTime.now().microsecondsSinceEpoch}.jpg';
 
       final result = await FlutterImageCompress.compressAndGetFile(
         file.path,

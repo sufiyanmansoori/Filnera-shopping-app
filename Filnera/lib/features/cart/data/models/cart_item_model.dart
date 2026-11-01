@@ -63,7 +63,7 @@ class CartItemModel {
       seller:
           json['seller']?.toString() ??
           json['sellerName']?.toString() ??
-          'Manara Store',
+          'Filnera Store',
     );
   }
 
